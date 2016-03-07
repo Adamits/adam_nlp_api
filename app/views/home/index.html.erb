@@ -1,0 +1,12 @@
+<div class="terms-container">
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+      <%= form_tag extract_path, method: :post do %>
+        <%= text_field_tag "[document][title]", "", class: "document-input", placeholder: "Title of your document" %>
+        <%= text_area_tag "[document][content]", "", class: "document-input", rows: 8, placeholder: "Enter some content to extract terms from" %>
+         <%= select_tag "[document][collection_name]", options_for_select(["test", "adam", "boyos", "rules"]), class: "document-select" %>
+        <%= submit_tag "Submit", class: "btn btn-primary btn-block document-submit" %>
+      <% end %>
+    </div>
+  </div>
+</div>

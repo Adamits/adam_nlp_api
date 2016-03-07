@@ -2,6 +2,7 @@ class Wp::Crawler
 
   def initialize(url, options={})
     @url = Wp::Url.new(url)
+    @collection_name = options[:collection_name]
     @keyword = options[:keyword] ? options[:keyword] : ""
   end
 
@@ -14,12 +15,24 @@ class Wp::Crawler
         next
       end
       (@responses ||= []) << response.scrape
+      puts generate_payload(response)
+      if generate_payload(response)
+        HTTParty.post("http://localhost:3000/api/v1/tf_idf/document/term_scores",
+          :body => generate_payload(response).to_json,
+          :headers => { 'Content-Type' => 'application/json' } )
+      end
       (crawled ||= []) << response.url.full
       url_name_queue << response.links.map { |link| link.full if link.crawlable_link?(@url.subdomain) }.compact
       url_name_queue.flatten!.shift
       url_name_queue = url_name_queue - crawled
-      puts "\n \n #{url_name_queue}"
     end
-    @responses.count
+    @responses
+  end
+
+  private
+  def generate_payload(response)
+    payload = { document: { title: response.title, content: response.content } } unless response.content.blank?
+    payload.merge(collection_name: @collection_name) if payload && @collection_name
+    payload
   end
 end

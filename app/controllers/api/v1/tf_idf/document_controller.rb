@@ -12,21 +12,31 @@ module Api::V1
 
     end
 
-    def term_scores
-      @document = Document.new(document_params)
+    def update_term_scores
+      collection_name = document_params.delete(:collection_name) || "general"
+      @collection = Collection.where(name: collection_name).last || Collection.create(name: collection_name)
+      @document = Document.new(document_params.merge(collection: @collection))
       @response = {}
       if @document.save
         @document.terms.each do |term|
-          @response[term.name] = {term_frequency: term.term_frequency(@document), document_frequency: term.document_frequency, tf_idf_weighted_score:  term.tf_idf(@document)}
+          @response[term.name] = {term_frequency: term.frequency(@document), document_frequency: term.document_frequency, tf_idf_weighted_score:  term.tf_idf(@document)}
         end
-        @document.add_to_collection(params[:document][:collection_name] || "general")
         render json: @response
       end
     end
 
+    def get_term_scores
+      @document = NonPersistedDocument.new(document_params)
+      @response = {}
+      @document.terms.each do |term|
+        @response[term.name] = {term_frequency: term.frequency, document_frequency: term.document_frequency, tf_idf_weighted_score:  term.tf_idf}
+      end
+      render json: @response
+    end
+
     private
     def document_params
-      params.require(:document).permit(:title, :content)
+      params.require(:document).permit(:title, :content, :collection_name)
     end
   end
 end

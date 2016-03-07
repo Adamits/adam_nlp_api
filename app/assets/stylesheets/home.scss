@@ -1,0 +1,22 @@
+.terms-container {
+  margin-top: 50px;
+
+  .document-input {
+    border: 1px solid black;
+    margin-top: 10px;
+    padding: 10px 10px;
+    width: 100%;
+  }
+
+  .document-select {
+    background-color: white;
+    border: 1px solid black;
+    height: 30px;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .document-submit {
+    margin-top: 10px;
+  }
+}

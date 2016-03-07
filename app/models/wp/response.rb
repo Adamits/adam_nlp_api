@@ -22,6 +22,12 @@ class Wp::Response
     end
     if @content_wrapper
       @title = @content_wrapper.at_css("h2").text
+      p_tag_in_content = @content_wrapper.css("p:nth-of-type(4)").first
+      @content = p_tag_in_content.parent.css("p").map(&:text) if p_tag_in_content
+      @content.pop if @content
+      @content = @content.join(" ") if @content
+      # The idea is that 4 <p> tags in a row indicates a high level of certainty that we
+      # have a handle on the actual blog content. So we take the text of all <p> tags in the parent
     end
     self
   end
@@ -32,6 +38,10 @@ class Wp::Response
 
   def title
     @title || ""
+  end
+
+  def content
+    @content || ""
   end
 
   private
