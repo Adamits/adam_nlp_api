@@ -1,5 +1,7 @@
 class Wp::Crawler
 
+  attr_accessor :url
+
   def initialize(url, options={})
     @url = Wp::Url.new(url)
     @collection_name = options[:collection_name]
