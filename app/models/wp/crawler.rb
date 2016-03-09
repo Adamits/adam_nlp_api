@@ -17,7 +17,7 @@ class Wp::Crawler
       (@responses ||= []) << response.scrape
       puts generate_payload(response)
       if generate_payload(response)
-        HTTParty.post(api_v1_tf_idf_document_term_scores_path,
+        HTTParty.post(Rails.application.routes.url_helpers.api_v1_tf_idf_document_term_scores_path,
           :body => generate_payload(response).to_json,
           :headers => { 'Content-Type' => 'application/json' } )
       end
